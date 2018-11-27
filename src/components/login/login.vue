@@ -24,9 +24,8 @@ export default {
         }
     },
     methods: {
-        handleLogin () {
-            this.$http.post('login', this.formdata)
-            .then((res)=>{
+        async handleLogin () {
+            const res = await this.$http.post('login', this.formdata)
                 // console.log(res)
                 const {
                     data,
@@ -39,18 +38,11 @@ export default {
                   // 2.提示成功
                     this.$message.success(msg)
                 }else{
+                    //登陆不成功
+                    // 1.提示消息
                     this.$message.warning(msg)
                 }
-                
-                
-                //登陆不成功
-                // 1.提示消息
-                
-            })
-            .catch((err)=>{
-                console.log(err)
-            })
-        }
+          }
     }
 };
 </script>
