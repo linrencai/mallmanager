@@ -34,9 +34,13 @@ export default {
                 // 登陆成功
                 // 1.跳转home
                 if(status === 200){
-                    this.$router.push({name:'home'})  
-                  // 2.提示成功
+                    // 保存token值
+                    localStorage.setItem('token',data.token)
+                    // 2.提示成功
                     this.$message.success(msg)
+                    // 跳转页面
+                    this.$router.push({name:'home'})  
+                  
                 }else{
                     //登陆不成功
                     // 1.提示消息
