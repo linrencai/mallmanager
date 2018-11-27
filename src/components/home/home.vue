@@ -98,7 +98,14 @@
 
 <script>
 export default {
-
+    // 组件渲染之前检测是否有token值
+    beforeCreate() {
+        const token = localStorage.getItem('token')
+        // 没有token 值就跳转登录页面
+        if(!token){
+            this.$router.push( {name: 'login'})
+        }
+    }
 }
 </script>
 
