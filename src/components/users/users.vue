@@ -32,7 +32,7 @@
         </el-table-column>
         <el-table-column prop="mg_state" label="用户状态">
             <template slot-scope="scope">
-                <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949">
+                <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949" @change="changeUserStatus(scope.row)"></el-switch>
                 </el-switch>
             </template>
         </el-table-column>
@@ -118,6 +118,11 @@ export default {
         this.getUsersList()
     },
     methods: {
+        // 改变用户状态
+        async changeUserStatus(user){
+            const res = await this.$http.put(`users/${user.id}/state/${user.mg_state}`)
+            console.log(res)
+        },
         // 编辑用户信息 -- 提交表单修改数据
         async editUser(){
             const res = await this.$http.put(`users/${this.form.id}`,this.form)
