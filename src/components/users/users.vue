@@ -40,7 +40,7 @@
             <template slot-scope="scope">
                 <el-button @click="showEditUserMsgBox(scope.row)" size="mini" plain type="primary" icon="el-icon-edit" circle></el-button>
                 <el-button @click="showDeleUserMsgBox(scope.row.id)" size="mini" plain type="danger" icon="el-icon-delete" circle></el-button>
-                <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
+                <el-button @click="showRoleUserMsgBox(scope.row)" size="mini" plain type="success" icon="el-icon-check" circle></el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -73,7 +73,7 @@
     <!-- 编辑用户弹出框 -->
     <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
         <el-form :model="form">
-            <el-form-item label="用户名" label-width="100px" >
+            <el-form-item label="用户名" label-width="100px">
                 <el-input v-model="form.username" autocomplete="off" disabled></el-input>
             </el-form-item>
             <el-form-item label="邮 箱" label-width="100px">
@@ -87,6 +87,30 @@
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
             <el-button type="primary" @click="editUser()">确 定</el-button>
+        </div>
+    </el-dialog>
+    <!-- 权限管理弹出框 -->
+    <el-dialog title="分配角色" :visible.sync="dialogFormVisibleRol">
+        <el-form :model="form">
+            <el-form-item label="用户名" label-width="100px">
+               {{currUserName}}
+            </el-form-item>
+            <el-form-item label="角色" label-width="100px">
+                {{currRoleId}}
+                <el-select v-model="currRoleId">
+                    <el-option label="请选择" :value="-1"></el-option>
+                    <el-option 
+                    :label="item.roleName" 
+                    :value="item.id"
+                    v-for="(item,i) in roles" 
+                    :key="i"
+                    ></el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisibleRol = false">取 消</el-button>
+            <el-button type="primary" @click="setRole()">确 定</el-button>
         </div>
     </el-dialog>
 </el-card>
@@ -106,36 +130,64 @@ export default {
             total: -1,
             dialogFormVisibleAdd: false,
             dialogFormVisibleEdit: false,
+            dialogFormVisibleRol: false,
             form: {
                 username: '',
                 password: '',
                 email: '',
                 mobile: ''
-            }
+            },
+            // 分配角色
+            currRoleId:-1,
+            currUserId:-1,
+            currUserName:'',
+            roles:[]
         }
     },
     created() {
         this.getUsersList()
     },
     methods: {
+        // 设置用户权限
+        async setRole(){
+            const res = await this.$http.put(`users/${this.currUserId}/role`,{rid:this.currRoleId})
+            // console.log(res)
+            this.dialogFormVisibleRol = false
+        },
+        // 更改用户权限 -- 对话框
+        async showRoleUserMsgBox(user){
+            this.currUserId = user.id
+            this.currUserName = user.username
+            this.dialogFormVisibleRol=true
+            // 获取当前所有的角色
+            const res1 = await this.$http.get(`roles`)
+            this.roles = res1.data.data
+            // console.log(res1)
+
+
+            // 获取当前用户的id --rid
+            const res = await this.$http.get(`users/${user.id}`)
+            this.currRoleId = res.data.data.rid
+            // console.log(res)
+        },
         // 改变用户状态
-        async changeUserStatus(user){
+        async changeUserStatus(user) {
             const res = await this.$http.put(`users/${user.id}/state/${user.mg_state}`)
-            console.log(res)
+            // console.log(res)
         },
         // 编辑用户信息 -- 提交表单修改数据
-        async editUser(){
-            const res = await this.$http.put(`users/${this.form.id}`,this.form)
+        async editUser() {
+            const res = await this.$http.put(`users/${this.form.id}`, this.form)
             // console.log(res)
-            if(res.data.meta.status === 200){
+            if (res.data.meta.status === 200) {
                 this.$message.success(res.data.meta.msg)
                 this.dialogFormVisibleEdit = false
-            }else {
+            } else {
                 this.$message.warning(res.data.meta.msg)
             }
         },
         // 编辑用户信息 -- 显示对话框
-        showEditUserMsgBox(users){
+        showEditUserMsgBox(users) {
             this.form = users
             this.dialogFormVisibleEdit = true
             // const res = await this.$http.put(`users/${id}`)
