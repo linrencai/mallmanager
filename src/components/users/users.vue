@@ -39,7 +39,7 @@
         <el-table-column prop="address" label="操作">
             <template slot-scope="scope">
                 <el-button size="mini" plain type="primary" icon="el-icon-edit" circle></el-button>
-                <el-button size="mini" plain type="danger" icon="el-icon-delete" circle></el-button>
+                <el-button @click="showDeleUserMsgBox(scope.row.id)" size="mini" plain type="danger" icon="el-icon-delete" circle></el-button>
                 <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
             </template>
         </el-table-column>
@@ -63,7 +63,7 @@
             <el-form-item label="电 话" label-width="100px">
                 <el-input v-model="form.mobile" autocomplete="off"></el-input>
             </el-form-item>
-            
+
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
@@ -87,10 +87,10 @@ export default {
             total: -1,
             dialogFormVisibleAdd: false,
             form: {
-                username:'',
-                password:'',
-                email:'',
-                mobile:''
+                username: '',
+                password: '',
+                email: '',
+                mobile: ''
             }
         }
     },
@@ -98,24 +98,59 @@ export default {
         this.getUsersList()
     },
     methods: {
+        // 删除用户
+        showDeleUserMsgBox(id) {
+            this.$confirm('确定要删除该用户吗?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
+                //发送删除的请求
+                const res = await this.$http.delete(`users/${id}`)
+                // console.log(res)
+                if (res.data.meta.status === 200) {
+                    // 回到第一页
+                    this.pagenum = 1
+                    // 更新视图
+                    this.getUsersList()
+                    // 提示删除成功
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    })
+                }
+
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                })
+            })
+        },
         // 发送添加用户请求
-        async addUser(){
-            const res = await this.$http.post(`users`,this.form)
-            const {meta:{status,msg},data} = res.data
-            if(status === 201){
+        async addUser() {
+            const res = await this.$http.post(`users`, this.form)
+            const {
+                meta: {
+                    status,
+                    msg
+                },
+                data
+            } = res.data
+            if (status === 201) {
                 this.$message.success(msg)
                 this.getUsersList()
                 this.form = {}
                 this.dialogFormVisibleAdd = false
-            }else{
+            } else {
                 this.$message.warning(msg)
             }
             console.log(res)
-            
+
         },
         //添加用户界面展示
-        showUserAddDia(){
-            this.dialogFormVisibleAdd =true
+        showUserAddDia() {
+            this.dialogFormVisibleAdd = true
         },
         //清空input，重新加载数据
         reloadUserList() {
