@@ -67,7 +67,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
-            <el-button type="primary" @click="dialogFormVisibleAdd = false">确 定</el-button>
+            <el-button type="primary" @click="addUser()">确 定</el-button>
         </div>
     </el-dialog>
 </el-card>
@@ -98,6 +98,21 @@ export default {
         this.getUsersList()
     },
     methods: {
+        // 发送添加用户请求
+        async addUser(){
+            const res = await this.$http.post(`users`,this.form)
+            const {meta:{status,msg},data} = res.data
+            if(status === 201){
+                this.$message.success(msg)
+                this.getUsersList()
+                this.form = {}
+                this.dialogFormVisibleAdd = false
+            }else{
+                this.$message.warning(msg)
+            }
+            console.log(res)
+            
+        },
         //添加用户界面展示
         showUserAddDia(){
             this.dialogFormVisibleAdd =true
