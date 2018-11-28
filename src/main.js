@@ -9,11 +9,17 @@ import '@/assets/css/base.css'
 
 import MyServerHttp from '@/plugins/http.js'
 import router from './router'
+
+import moment from 'moment'
 Vue.config.productionTip = false
 // 使用Vue插件
 Vue.use(ElementUI)
 // axios自定义Vue插件使用
 Vue.use(MyServerHttp)
+// 全局过滤器 -- 处理日期格式
+Vue.filter('fmtdata',(v)=>{
+    return moment(v).format('YYYY-MM-DD')
+  })
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

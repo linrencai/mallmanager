@@ -16,26 +16,36 @@
         </el-col>
     </el-row>
     <!-- 3.表格 -->
-    <el-table :data="tableData" style="width: 100%">
-        <el-table-column 
-        type="index"
-        prop="date" label="#" width="50">
+    <el-table :data="userlist" style="width: 100%">
+        <el-table-column type="index" prop="date" label="#" width="50">
         </el-table-column>
-        <el-table-column prop="name" label="姓名" width="80">
+        <el-table-column prop="username" label="姓名" width="80">
         </el-table-column>
-        <el-table-column prop="address" label="邮箱">
+        <el-table-column prop="email" label="邮箱">
         </el-table-column>
-        <el-table-column prop="address" label="电话">
+        <el-table-column prop="mobile" label="电话">
         </el-table-column>
-        <el-table-column prop="address" label="创建时间">
+        <el-table-column prop="create_time" label="创建时间">
+            <template slot-scope="abb">
+                {{abb.row.create_time | fmtdata}}
+            </template>
         </el-table-column>
-        <el-table-column prop="address" label="用户状态">
+        <el-table-column prop="mg_state" label="用户状态">
+            <template slot-scope="scope">
+                <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949">
+                </el-switch>
+            </template>
         </el-table-column>
         <el-table-column prop="address" label="操作">
+            <template slot-scope="scope">
+                <el-button size="mini" plain type="primary" icon="el-icon-edit" circle></el-button>
+                <el-button size="mini" plain type="danger" icon="el-icon-delete" circle></el-button>
+                <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
+            </template>
         </el-table-column>
     </el-table>
     <!-- 4.分页 -->
-       <!-- <el-pagination
+    <!-- <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage4"
@@ -51,36 +61,23 @@
 export default {
     data() {
         return {
-            pagenum:1,
-            pagesize:2,
+
             query: '',
             // 表格绑定的数据
-            tableData: [{
-            date: '1',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '3',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '4',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          }]
+            userlist: [],
+            // 分页相关的数据
+            pagenum: 1,
+            pagesize: 2,
+            totle: -1
         }
     },
-    created(){
+    created() {
         this.getUsersList()
     },
     methods: {
-        
+
         // 获取用户列表的请求
-        async getUsersList(){
+        async getUsersList() {
             // 获取token
             const AUTH_TOKEN = localStorage.getItem('token')
             //token令牌
@@ -88,6 +85,24 @@ export default {
             // 发送请求
             const res = await this.$http.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
             console.log(res)
+            // 对象解构赋值
+            const {
+                meta: {
+                    status,
+                    msg
+                },
+                data: {
+                    users,
+                    totle
+                }
+            } = res.data
+            if (status === 200) {
+                this.userlist = users
+                this.totle = totle
+                this.$message.success(msg)
+            } else {
+                this.$message.warning(msg)
+            }
         }
     }
 }
