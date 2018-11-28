@@ -45,15 +45,16 @@
         </el-table-column>
     </el-table>
     <!-- 4.分页 -->
-    <!-- <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage4"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400">
-        </el-pagination> -->
+    <el-pagination 
+    @size-change="handleSizeChange" 
+    @current-change="handleCurrentChange" 
+    :current-page="pagenum" 
+    :page-sizes="[2, 4, 6, 8]" 
+    :page-size="2" 
+    layout="total, sizes, prev, pager, next, jumper" 
+    :total="total">
+    </el-pagination>
+
 </el-card>
 </template>
 
@@ -68,13 +69,25 @@ export default {
             // 分页相关的数据
             pagenum: 1,
             pagesize: 2,
-            totle: -1
+            total: -1
         }
     },
     created() {
         this.getUsersList()
     },
     methods: {
+        // 分页
+        handleSizeChange(val) {
+            console.log(`每页 ${val} 条`)
+            this.pagesize = val
+            this.pagenum = 1
+            this.getUsersList()
+        },
+        handleCurrentChange(val) {
+            console.log(`当前页: ${val}`)
+            this.pagenum = val
+            this.getUsersList()
+        },
 
         // 获取用户列表的请求
         async getUsersList() {
@@ -93,12 +106,12 @@ export default {
                 },
                 data: {
                     users,
-                    totle
+                    total
                 }
             } = res.data
             if (status === 200) {
                 this.userlist = users
-                this.totle = totle
+                this.total = total
                 this.$message.success(msg)
             } else {
                 this.$message.warning(msg)
