@@ -9,8 +9,8 @@
     <!-- 2.搜索 -->
     <el-row class="searchRow">
         <el-col>
-            <el-input placeholder="请输入内容" v-model="query" class="inputSelect">
-                <el-button slot="append" icon="el-icon-search"></el-button>
+            <el-input placeholder="请输入内容" v-model="query" class="inputSelect" clearable @clear="reloadUserList()">
+                <el-button @click="searchUser()" slot="append" icon="el-icon-search"></el-button>
             </el-input>
             <el-button type="success" plain>添加用户</el-button>
         </el-col>
@@ -76,6 +76,14 @@ export default {
         this.getUsersList()
     },
     methods: {
+        //清空input，重新加载数据
+        reloadUserList(){
+            this.getUsersList()
+        },
+        // 搜索用户
+        searchUser(){
+            this.getUsersList()
+        },
         // 分页
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`)
@@ -112,7 +120,7 @@ export default {
             if (status === 200) {
                 this.userlist = users
                 this.total = total
-                this.$message.success(msg)
+                // this.$message.success(msg)
             } else {
                 this.$message.warning(msg)
             }
