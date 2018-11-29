@@ -273,9 +273,9 @@ export default {
         // 获取用户列表的请求
         async getUsersList() {
             // 获取token
-            const AUTH_TOKEN = localStorage.getItem('token')
-            //token令牌
-            this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
+            // const AUTH_TOKEN = localStorage.getItem('token')
+            // //token令牌
+            // this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
             // 发送请求
             const res = await this.$http.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
             // console.log(res)

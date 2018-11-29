@@ -9,28 +9,32 @@
     <my-bread level1="权限管理" level2="权限列表"></my-bread>
     <!-- 表格 -->
     <el-table
-    :data="tableData3"
+    :data="rightlist"
     height="450"
     border
     style="width: 100%"
     class="table_top">
         <el-table-column
-        prop="date"
+        type="index"
         label="#"
-        width="180">
+        width="100">
         </el-table-column>
         <el-table-column
-        prop="name"
+        prop="authName"
         label="权限名称"
         width="180">
         </el-table-column>
         <el-table-column
-        prop="address"
+        prop="path"
         label="路径">
         </el-table-column>
         <el-table-column
-        prop="address"
         label="层级">
+        <template slot-scope="scope">
+            <span v-if="scope.row.level === '0'">一级</span>
+            <span v-if="scope.row.level === '1'">二级</span>
+            <span v-if="scope.row.level === '2'">三级</span>
+        </template>
         </el-table-column>
     </el-table>
 </el-card>
@@ -38,61 +42,27 @@
 
 <script>
 export default {
+    created(){
+        this.getRightList()
+    },
+    methods:{
+        async getRightList(){
+            // // 获取token
+            // const AUTH_TOKEN = localStorage.getItem('token')
+            // //token令牌
+            // this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
+            // 发送获取列标请求
+            const res = await this.$http.get(`rights/list`)
+            console.log(res)
+            this.rightlist = res.data.data
+            console.log(this.rightlist)
+        }
+    },
     data() {
       return {
-        tableData3: [{
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-08',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-07',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }]
+        rightlist:[
+            
+        ]
       }
     }
   }
