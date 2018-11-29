@@ -12,16 +12,16 @@
                 <!-- 第一行 -->
                 <el-row v-for="(items,i) in props.row.children" :key="i">
                     <!-- 第一列 -->
-                    <el-col>
-                        <el-tag :span="4"> {{items.authName}} </el-tag>
+                    <el-col :span="4">
+                        <el-tag > {{items.authName}} </el-tag>
                     </el-col>
                     <el-col :span="20">
-                        <el-row v-for="(items1,i) in items.children" :key="i">
-                            <el-col>
-                                <el-tag :span="4"> {{items1.authName}} </el-tag>
+                        <el-row v-for="(items1,i1) in items.children" :key="i1">
+                            <el-col :span="2" class="col3">
+                                <el-tag class="tag2"> {{items1.authName}} </el-tag>
                             </el-col>
-                            <el-col :span="20">
-
+                            <el-col :span="3" v-for="(items2,i2) in items1.children" :key="i2">
+                                         <el-tag class="tag3" > {{items2.authName}} </el-tag>
                             </el-col>
                         </el-row>
                         
@@ -81,6 +81,16 @@ export default {
 
 .addRole {
     margin-top: 5px;
+}
+.tag2 {
+    background:red;
+}
+.tag3 {
+    background:yellow;
+}
+.col3 {
+    width: 100px;
+    height: 100px;
 }
 
 </style>
