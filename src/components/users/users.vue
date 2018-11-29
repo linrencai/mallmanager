@@ -1,11 +1,13 @@
 <template>
 <el-card class="box-card">
     <!-- 1.面包屑 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
+    <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>用户管理</el-breadcrumb-item>
         <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    </el-breadcrumb> -->
+    <!-- 面包屑全局组件的使用 -->
+    <my-bread level1="用户管理" level2="用户列表"></my-bread>
     <!-- 2.搜索 -->
     <el-row class="searchRow">
         <el-col>
@@ -303,6 +305,7 @@ export default {
 <style>
 .box-card {
     height: 100%;
+    border: none;
 }
 
 .inputSelect {

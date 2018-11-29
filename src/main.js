@@ -11,6 +11,12 @@ import MyServerHttp from '@/plugins/http.js'
 import router from './router'
 
 import moment from 'moment'
+// 引入面包屑全局组件
+import MyBread from '@/components/breadcrumb/myBread.vue'
+//全局自定义组件
+Vue.component(MyBread.name, MyBread)
+
+
 Vue.config.productionTip = false
 // 使用Vue插件
 Vue.use(ElementUI)
