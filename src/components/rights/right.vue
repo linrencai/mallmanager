@@ -53,9 +53,9 @@ export default {
             // this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
             // 发送获取列标请求
             const res = await this.$http.get(`rights/list`)
-            console.log(res)
+            // console.log(res)
             this.rightlist = res.data.data
-            console.log(this.rightlist)
+            // console.log(this.rightlist)
         }
     },
     data() {

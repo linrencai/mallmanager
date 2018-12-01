@@ -3,9 +3,7 @@
     <el-header class="header">
         <el-row>
             <el-col :span="4">
-                <div class="grid-content bg-purple">
-                    <img src="../../assets/logo.png" alt="无法显示图片">
-                </div>
+                
             </el-col>
             <el-col :span="18" class="middle">
                 <h2>电商后台管理系统</h2>

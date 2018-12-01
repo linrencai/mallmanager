@@ -13,20 +13,23 @@
                 <el-row v-for="(items,i) in props.row.children" :key="i">
                     <!-- 第一列 -->
                     <el-col :span="4">
-                        <el-tag > {{items.authName}} </el-tag>
+                        <el-tag @close="deleteRight(props.row,items.id)" closable> {{items.authName}} </el-tag>
+                        <span class="el-icon-arrow-right"></span>
                     </el-col>
                     <el-col :span="20">
                         <el-row v-for="(items1,i1) in items.children" :key="i1">
-                            <el-col :span="2" class="col3">
-                                <el-tag class="tag2"> {{items1.authName}} </el-tag>
+                            <el-col :span="4" class="col3">
+                                <el-tag @close="deleteRight(props.row,items1.id)" class="tag2" type="success" closable> {{items1.authName}} </el-tag>
+                                <span class="el-icon-arrow-right"></span>
                             </el-col>
-                            <el-col :span="3" v-for="(items2,i2) in items1.children" :key="i2">
-                                         <el-tag class="tag3" > {{items2.authName}} </el-tag>
+                            <el-col :span="20" >
+                                         <el-tag @close="deleteRight(props.row,items2.id)" type="warning" closable class="tag3" v-for="(items2,i2) in items1.children" :key="i2"> {{items2.authName}} </el-tag>
                             </el-col>
                         </el-row>
                         
                     </el-col>
                 </el-row>
+                <span v-if="props.row.children.length===0">未分配权限</span>
             </template>
         </el-table-column>
         <el-table-column label="#" type="index" width="200">
@@ -52,6 +55,12 @@ export default {
         this.getRoleList()
     },
     methods:{
+        async deleteRight(role,rightId){
+            // roles/:roleId/rights/:rightId
+            const res = await this.$http.delete(`roles/${role.id}/rights/${rightId}`)
+            console.log(res);
+            role.children = res.data.data
+        },
         async getRoleList(){
             // // 获取token
             // const AUTH_TOKEN = localStorage.getItem('token')
@@ -59,9 +68,9 @@ export default {
             // this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
             // 发送获取列标请求
             const res = await this.$http.get(`roles`)
-            console.log(res)
+            // console.log(res)
             this.rolelist = res.data.data
-            console.log(this.rolelist)
+            // console.log(this.rolelist)
         }
     },
     data() {
@@ -78,19 +87,7 @@ export default {
     height: 100%;
     border: none;
 }
-
 .addRole {
     margin-top: 5px;
 }
-.tag2 {
-    background:red;
-}
-.tag3 {
-    background:yellow;
-}
-.col3 {
-    width: 100px;
-    height: 100px;
-}
-
 </style>
