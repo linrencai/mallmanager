@@ -113,7 +113,7 @@ export default {
             // console.log(this.form.attrs)
             // 添加商品 ---发送请求
             const res = await this.$http.post(`goods`,this.form)
-            console.log(res)
+            // console.log(res)
             this.$router.push({name:'goods'})
         },
         // 图片上传

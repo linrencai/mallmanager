@@ -54,11 +54,11 @@ export default {
     methods: {
         async getGoodslist() {
             const {data:res} = await this.$http.get(`goods?pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
-            console.log(res)
+            // console.log(res)
             this.goodslist = res.data.goods
-            console.log(this.goodslist)
+            // console.log(this.goodslist)
             this.total = res.data.total
-            console.log(this.total)
+            // console.log(this.total)
         },
         handleSizeChange(val) {
         // console.log(`每页 ${val} 条`)
