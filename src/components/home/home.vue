@@ -23,72 +23,18 @@
             :router = "true"
             :unique-opened = "true"
             >
-                <el-submenu index="1">
+            <!-- 遍历出侧边栏菜单 -->
+                <el-submenu :index=" ''+item1.order" v-for="(item1,i) in menuList" :key="i">
                     <template slot="title">
                         <i class="el-icon-location"></i>
-                        <span>用户管理</span>
+                        <span> {{item1.authName}} </span>
                     </template>
-                    <el-menu-item index="users">
+                    <el-menu-item :index=" ''+item2.path" v-for="(item2,i2) in item1.children" :key="i2">
                         <i class="el-icon-circle-check"></i>
-                        <span>用户列表</span>
+                        <span> {{item2.authName}} </span>
                     </el-menu-item>
                 </el-submenu>
-                <!-- 2 -->
-                <el-submenu index="2">
-                    <template slot="title">
-                        <i class="el-icon-location"></i>
-                        <span>权限管理</span>
-                    </template>
-                    <el-menu-item index="roles">
-                        <i class="el-icon-location"></i>
-                        <span>角色列表</span>
-                    </el-menu-item>
-                    <el-menu-item index="rights">
-                        <i class="el-icon-location"></i>
-                        <span>权限列表</span>
-                    </el-menu-item>
-                </el-submenu>
-                <!-- 3 -->
-                <el-submenu index="3">
-                    <template slot="title">
-                        <i class="el-icon-location"></i>
-                        <span>商品管理</span>
-                    </template>
-                    <el-menu-item index="1-1">
-                        <i class="el-icon-location"></i>
-                        <span>商品列表</span>
-                    </el-menu-item>
-                    <el-menu-item index="1-1">
-                        <i class="el-icon-location"></i>
-                        <span>分类参数</span>
-                    </el-menu-item>
-                    <el-menu-item index="1-1">
-                        <i class="el-icon-location"></i>
-                        <span>商品分类</span>
-                    </el-menu-item>
-                </el-submenu>
-                <!-- 4 -->
-                <el-submenu index="4">
-                    <template slot="title">
-                        <i class="el-icon-location"></i>
-                        <span>订单管理</span>
-                    </template>
-                    <el-menu-item index="1-1">
-                        <i class="el-icon-location"></i>
-                        <span>订单列表</span>
-                    </el-menu-item>
-                </el-submenu>
-                <!-- 5 -->
-                <el-submenu index="5">
-                    <template slot="title">
-                        <i class="el-icon-location"></i>
-                        <span>数据统计</span>
-                    </template>
-                    <el-menu-item index="1-1">
-                        <i class="el-icon-location"></i>
-                        <span>数据报表</span>
-                    </el-menu-item>
-                </el-submenu>
+                
             </el-menu>
         </el-aside>
         <el-main class="main">
@@ -101,14 +47,29 @@
 <script>
 export default {
     // 组件渲染之前检测是否有token值
-    beforeCreate() {
-        const token = localStorage.getItem('token')
-        // 没有token 值就跳转登录页面
-        if(!token){
-            this.$router.push( {name: 'login'})
+    // beforeCreate() {
+        // const token = localStorage.getItem('token')
+        // // 没有token 值就跳转登录页面
+        // if(!token){
+        //     this.$router.push( {name: 'login'})
+        // }
+    // },
+    data(){
+        return{
+            menuList:[]
         }
     },
+    created(){
+        this.getMenus()
+    },
     methods: {
+        // 设置动态创建侧边栏
+        async getMenus(){
+            const res = await this.$http.get(`menus`)
+            // console.log(res)
+            this.menuList = res.data.data
+        },
+        // 退出登录功能
         handleSignout(){
             // 清除token
             localStorage.clear()

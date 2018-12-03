@@ -3,7 +3,7 @@
     <my-bread level1="权限管理" level2="角色列表"></my-bread>
     <el-row>
         <el-col>
-            <el-button type="info" class="addRole">添加角色</el-button>
+            <el-button type="primary" class="addRole" @click="showAddRole()" plain>添加角色</el-button>
         </el-col>
     </el-row>
     <el-table :data="rolelist" style="width: 100%" height="450">
@@ -45,25 +45,33 @@
                 <el-button @click="showEditRightDia(scope.row)" size="mini" plain type="success" icon="el-icon-check" circle></el-button>
             </template>
         </el-table-column>
-        
+
     </el-table>
     <!-- 修改权限对话框 -->
-        <el-dialog title="权限修改" :visible.sync="dialogVisibleRight" width="50%">
-            <!-- 树形结构 -->
-            <el-tree
-            ref="tree"
-            :data="treelist"
-            show-checkbox
-            default-expand-all
-            :default-checked-keys="arrchecked"
-            node-key="id"
-            :props="defaultProps">
-            </el-tree>
-            <span slot="footer" class="dialog-footer">
+    <el-dialog title="权限修改" :visible.sync="dialogVisibleRight" width="50%">
+        <!-- 树形结构 -->
+        <el-tree ref="tree" :data="treelist" show-checkbox default-expand-all :default-checked-keys="arrchecked" node-key="id" :props="defaultProps">
+        </el-tree>
+        <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisibleRight = false">取 消</el-button>
                 <el-button type="primary" @click="setRight()">确 定</el-button>
             </span>
-        </el-dialog>
+    </el-dialog>
+    <!-- 添加角色对话框 -->
+    <el-dialog title="添加角色" :visible.sync="dialogFormVisibleAdd" width="50%">
+        <el-form :model="form">
+            <el-form-item label="角色名称" width="300">
+                <el-input v-model="form.roleName" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="角色描述" width="300">
+                <el-input v-model="form.roleDesc" autocomplete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
+            <el-button type="primary" @click="addRole()">确 定</el-button>
+        </div>
+    </el-dialog>
 </el-card>
 </template>
 
@@ -73,26 +81,37 @@ export default {
         this.getRoleList()
     },
     methods: {
+        // 添加角色 ---发送请求
+        async addRole(){
+
+            const res = await this.$http.post(`roles`,this.form)
+            console.log(res)
+            this.getRoleList()
+            this.dialogFormVisibleAdd = false
+        },
+        // 添加角色  --- 显示对话框
+        showAddRole() {
+            this.dialogFormVisibleAdd = true
+        },
         // 设置角色权限
-        async setRight(){
-            
+        async setRight() {
+
             // 获取全选id的数组arr1   getCheckedKeys
             let arr1 = this.$refs.tree.getCheckedKeys()
-
 
             // 获取半选id的数组arr2   getHalfCheckedKeys
             let arr2 = this.$refs.tree.getHalfCheckedKeys()
 
             // 获取所有的权限选项arr= arr1 + arr2
-            const arr = [...arr1,...arr2]
+            const arr = [...arr1, ...arr2]
             // console.log(arr)
-            
+
             //发送授权请求
-            const res = await this.$http.post(`roles/${this.currRoleId}/rights`,{rids:arr.join(',')})
+            const res = await this.$http.post(`roles/${this.currRoleId}/rights`, {
+                rids: arr.join(',')
+            })
             console.log(res)
-            
-            
-            
+
             //关闭对话框
             this.dialogVisibleRight = false
 
@@ -100,10 +119,10 @@ export default {
             this.getRoleList()
         },
         // 修改权限 --显示对话框
-        async showEditRightDia(r){
-           this.currRoleId = r.id
+        async showEditRightDia(r) {
+            this.currRoleId = r.id
             // 获取树形结构数据
-            const res =  await this.$http.get(`rights/tree`)
+            const res = await this.$http.get(`rights/tree`)
             // console.log(res)
             this.treelist = res.data.data
             // var arrtemp1 =[]
@@ -118,7 +137,7 @@ export default {
             // });
             // this.arrExpand = arrtemp1
             // 获取弹出框的勾选项
-            let arrtemp1 =[]
+            let arrtemp1 = []
             r.children.forEach(items1 => {
                 // arrtemp1.push(items1.id)
                 items1.children.forEach(items2 => {
@@ -153,15 +172,20 @@ export default {
     data() {
         return {
             rolelist: [],
-            dialogVisibleRight:false,
+            dialogVisibleRight: false,
+            dialogFormVisibleAdd:false,
             // 属性结构的数据
-            treelist:[],
+            treelist: [],
             defaultProps: {
-            children: 'children',
-            label: 'authName'
+                children: 'children',
+                label: 'authName'
             },
-            arrchecked:[],
-            currRoleId:''
+            arrchecked: [],
+            currRoleId: '',
+            form:{
+                roleName:'',
+                roleDesc:''
+            }
             // arrExpand:[]
         }
     }
